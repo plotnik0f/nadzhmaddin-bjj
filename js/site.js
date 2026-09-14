@@ -77,6 +77,8 @@
 
     list.textContent = '';
     list.appendChild(made);
+    // Карусель отзывов пересчитывает страницы на resize
+    window.dispatchEvent(new Event('resize'));
 
     var heading = document.getElementById('reviews-heading');
     if (heading) heading.textContent = 'Что говорят ученики';
@@ -149,16 +151,27 @@
     });
   }
 
-  // ── Карусели фото сборов ──────────────────────────────────────────
+  // ── Карусели: фото сборов, групп и отзывы ─────────────────────────
   // Листание пальцем работает и без скрипта (scroll-snap в CSS). Здесь только
-  // стрелки для мыши и счётчик «1 / 3» вместо статичного «3 фото».
+  // стрелки для мыши и счётчик «1 / 3». Страницы считаются по ширине прокрутки,
+  // а не по числу слайдов: у отзывов на странице 1 карточка на телефоне и 4 на
+  // компьютере, и между колонками есть отступ.
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   Array.prototype.forEach.call(document.querySelectorAll('[data-carousel]'), function (carousel) {
     var track = carousel.querySelector('.carousel-track');
-    var slides = track ? track.querySelectorAll('.carousel-slide') : [];
     var count = carousel.querySelector('.carousel-count');
-    if (!track || slides.length < 2) return;
+    if (!track) return;
+    var isReviews = carousel.classList.contains('carousel--reviews');
+
+    var gap = function () { return parseFloat(getComputedStyle(track).columnGap) || 0; };
+    var step = function () { return Math.max(track.clientWidth + gap(), 1); };
+    var pages = function () {
+      return Math.max(1, Math.ceil((track.scrollWidth + gap()) / step() - 0.01));
+    };
+    var current = function () {
+      return Math.min(Math.max(Math.round(track.scrollLeft / step()), 0), pages() - 1);
+    };
 
     var makeButton = function (dir, label, path) {
       var btn = document.createElement('button');
@@ -169,21 +182,25 @@
       btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
         + '<path d="' + path + '" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       btn.addEventListener('click', function () {
-        track.scrollBy({ left: dir * track.clientWidth, behavior: reduceMotion ? 'auto' : 'smooth' });
+        var target = Math.min(Math.max(current() + dir, 0), pages() - 1) * step();
+        track.scrollTo({
+          left: Math.min(target, track.scrollWidth - track.clientWidth),
+          behavior: reduceMotion ? 'auto' : 'smooth'
+        });
       });
       carousel.appendChild(btn);
       return btn;
     };
 
-    var prev = makeButton(-1, 'Предыдущее фото', 'M10 3L5 8l5 5');
-    var next = makeButton(1, 'Следующее фото', 'M6 3l5 5-5 5');
+    var prev = makeButton(-1, isReviews ? 'Предыдущие отзывы' : 'Предыдущее фото', 'M10 3L5 8l5 5');
+    var next = makeButton(1, isReviews ? 'Следующие отзывы' : 'Следующее фото', 'M6 3l5 5-5 5');
 
     var update = function () {
-      var index = Math.round(track.scrollLeft / Math.max(track.clientWidth, 1));
-      index = Math.min(Math.max(index, 0), slides.length - 1);
-      if (count) count.textContent = (index + 1) + ' / ' + slides.length;
+      var total = pages(), index = current();
+      if (count) count.textContent = (index + 1) + ' / ' + total;
       prev.disabled = index === 0;
-      next.disabled = index === slides.length - 1;
+      next.disabled = index >= total - 1;
+      carousel.toggleAttribute('data-single', total < 2);
     };
 
     var queued = false;
@@ -201,7 +218,7 @@
     if ('IntersectionObserver' in window) {
       var preload = new IntersectionObserver(function (entries) {
         if (!entries[0].isIntersecting) return;
-        Array.prototype.forEach.call(slides, function (img) { img.loading = 'eager'; });
+        Array.prototype.forEach.call(track.querySelectorAll('img'), function (img) { img.loading = 'eager'; });
         preload.disconnect();
       }, { rootMargin: '600px 0px' });
       preload.observe(carousel);

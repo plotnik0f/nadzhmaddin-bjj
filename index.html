@@ -494,7 +494,8 @@
       </div>
     </div>
 
-    <div id="reviews-list" class="mt-12 grid gap-6 md:grid-cols-2">
+    <div class="carousel carousel--reviews mt-12" data-carousel>
+      <div id="reviews-list" class="carousel-track reviews-track" tabindex="0" role="region" aria-label="Отзывы учеников">
       <!-- REVIEWS:START -->
       <article class="rounded-xl border border-line bg-paper p-6">
         <p class="leading-relaxed text-ink2">«Отличный тренер, доходчиво объясняющий и показывающий только рабочие техники, очень внимательно относится к каждому ученику и старается всегда найти подход к своим ученикам.»</p>
@@ -537,6 +538,8 @@
         <p class="mt-4 text-sm font-medium text-ink">Гайдар</p>
       </article>
       <!-- REVIEWS:END -->
+      </div>
+      <span class="carousel-count" aria-hidden="true"></span>
     </div>
   </div>
 </section>

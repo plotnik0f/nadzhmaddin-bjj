@@ -320,3 +320,54 @@ button,
 /* Карусель вертикальных кадров (медали, победы): окно 4:5, иначе 4:3
    срезает головы и ноги у фото в полный рост */
 .carousel--portrait .carousel-slide { aspect-ratio: 4 / 5; }
+
+/* ── Карусель отзывов ─────────────────────────────────────────────────
+   Телефон: один отзыв на странице. Компьютер: 4 отзыва (2×2) на странице.
+   Отзывы раскладываются колонками по горизонтали, привязка прокрутки —
+   к каждому 4-му, так что листается ровно страница. Без JS листается пальцем. */
+.carousel-track.reviews-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  gap: 1.5rem;
+}
+.reviews-track > article { scroll-snap-align: start; }
+
+@media (min-width: 768px) {
+  .carousel-track.reviews-track {
+    /* row, а не column: у каждого отзыва ниже задан ряд, и при заполнении
+       по рядам он встаёт в свой ряд слева направо. При column курсор идёт
+       сверху вниз по колонкам и 4-й отзыв перескакивает на лишнюю страницу. */
+    grid-auto-flow: row;
+    grid-template-rows: repeat(2, auto);
+    grid-auto-columns: calc((100% - 1.5rem) / 2);
+  }
+  .reviews-track > article { scroll-snap-align: none; }
+  .reviews-track > article:nth-child(4n + 1) { scroll-snap-align: start; }
+  /* Ряды назначены явно: без этого сетка заполняется по колонкам и страница
+     читается 1, 3 / 2, 4 — порядок «свежие сверху» ломается. Так 1, 2 / 3, 4. */
+  .reviews-track > article:nth-child(4n + 1),
+  .reviews-track > article:nth-child(4n + 2) { grid-row: 1; }
+  .reviews-track > article:nth-child(4n + 3),
+  .reviews-track > article:nth-child(4n + 4) { grid-row: 2; }
+}
+
+/* Стрелки и счётчик — под отзывами, а не поверх текста */
+.carousel--reviews {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.carousel--reviews .carousel-track { flex: 0 0 100%; margin-bottom: 0.25rem; }
+.carousel--reviews .carousel-count { position: static; order: 1; margin-right: auto; }
+.carousel--reviews .carousel-btn { position: static; margin-top: 0; order: 2; }
+.carousel--reviews .carousel-btn[disabled] { opacity: 0.3; }
+.carousel--reviews[data-single] .carousel-btn,
+.carousel--reviews[data-single] .carousel-count { display: none; }
+.carousel-count:empty { display: none; }
+
+@media print {
+  .carousel-track.reviews-track { display: block; }
+  .reviews-track > article { margin-bottom: 1rem; }
+}
