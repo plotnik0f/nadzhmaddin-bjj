@@ -82,7 +82,7 @@
     if (heading) heading.textContent = 'Что говорят ученики';
     var intro = document.getElementById('reviews-intro');
     if (intro) {
-      intro.textContent = 'Отзывы приходят через форму, публикую их без правок. Если тоже тренировались у меня, напишите пару строк.';
+      intro.textContent = 'Отзывы приходят через форму, и я публикую их без правок. Тренировались у меня? Напишите пару строк.';
     }
   };
 
