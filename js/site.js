@@ -36,15 +36,20 @@
   var MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
     'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 
-  // «14.09.2026 23:41:09» из «Отметки времени» → 14 сентября 2026
+  // «14.09.2026 23:41:09» из «Отметки времени» → 14 сентября 2026, 23:41
   var reviewDate = function (stamp) {
-    var m = /(\d{1,2})\.(\d{1,2})\.(\d{4})/.exec(stamp || '');
+    var m = /(\d{1,2})\.(\d{1,2})\.(\d{4})(?:\D+(\d{1,2}):(\d{2}))?/.exec(stamp || '');
     if (!m) return null;
-    var d = +m[1], mo = +m[2];
-    return {
-      iso: m[3] + '-' + (mo < 10 ? '0' : '') + mo + '-' + (d < 10 ? '0' : '') + d,
-      label: d + ' ' + MONTHS[mo - 1] + ' ' + m[3]
+    var two = function (n) { return (n < 10 ? '0' : '') + n; };
+    var date = {
+      iso: m[3] + '-' + two(+m[2]) + '-' + two(+m[1]),
+      label: +m[1] + ' ' + MONTHS[m[2] - 1] + ' ' + m[3]
     };
+    if (m[4]) {
+      date.iso += 'T' + two(+m[4]) + ':' + m[5];
+      date.label += ', ' + two(+m[4]) + ':' + m[5];
+    }
+    return date;
   };
 
   var renderReviews = function (rows) {
