@@ -1,0 +1,322 @@
+/* ── Фолбэк на случай, если Tailwind с CDN не доехал ──────────────────
+   Без него страница не просто теряет оформление, а ломается: картинки
+   рендерятся в натуральную ширину (горизонтальный скролл на телефоне),
+   а служебный текст .sr-only вываливается в вёрстку. Дублирует базовый
+   сброс Tailwind ровно в том минимуме, который спасает читаемость. */
+*, *::before, *::after { box-sizing: border-box; }
+
+img, svg, video { max-width: 100%; height: auto; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Отзывы вставляются руками, а люди пишут длинные ссылки без пробелов */
+body { overflow-wrap: anywhere; }
+
+:root {
+  /* ВНИМАНИЕ: это НЕ единственное место с палитрой. Утилиты Tailwind
+     (bg-paper, text-ink2, …) берут цвета из tailwind.config в index.html.
+     Меняешь оттенок — правь ОБА места, иначе правка не даст эффекта. */
+  --paper: #f7f3ea;
+  --paper-2: #efe7d8;
+  --ink: #241e19;
+  --ink-2: #5c5147;
+  --line: #dcd1be;
+  --accent: #b4472e;      /* только заливки кнопок и крупный заголовок */
+  --accent-2: #8e3421;    /* hover кнопок */
+  --accent-ink: #a83f27;  /* акцентный ТЕКСТ на бумаге, AA 5.0+ */
+  --accent-light: #d97b5c; /* акцентный текст на тёмных секциях, AA 5.3+ */
+  --dark: #1c1815;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.font-display {
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
+/* Тонкая бумажная фактура: две сетки точек, чтобы фон не читался пластиковой заливкой */
+.paper-grain {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(36, 30, 25, 0.045) 1px, transparent 0),
+    radial-gradient(circle at 1px 1px, rgba(36, 30, 25, 0.03) 1px, transparent 0);
+  background-size: 22px 22px, 37px 37px;
+  background-position: 0 0, 11px 13px;
+}
+
+/* Порядковый номер секции — печатная программка, а не лендинг */
+.section-index {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.18em;
+}
+
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 0 1px;
+  background-position: 0 100%;
+  transition: background-size 0.25s ease;
+}
+.link-underline:hover {
+  background-size: 100% 1px;
+}
+
+/* Регалии: маркер-засечка вместо буллета */
+.regalia li {
+  position: relative;
+  padding-left: 1.6rem;
+}
+.regalia li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 0.8rem;
+  height: 1px;
+  background: var(--accent);
+}
+
+.faq-item[open] .faq-sign {
+  transform: rotate(45deg);
+}
+.faq-sign {
+  transition: transform 0.2s ease;
+}
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+:where(a, button, summary):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Фото собраны из открытых публикаций: Telegram до 800 px, Instagram до 640 px.
+   Кадр всегда меньше своего контейнера — апскейла быть не должно. */
+.photo-frame {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+}
+
+/* Групповые фото сняты вертикально: люди стоят примерно на 55-60 % высоты кадра.
+   При обрезке в широкую полосу object-top показывал бы потолок, а не лица. */
+.photo-group {
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-position: var(--focus, 50% 58%);
+}
+
+.nav-link[data-active="true"] {
+  color: var(--accent-ink);
+}
+
+/* ── Печать ───────────────────────────────────────────────────────────
+   Браузер по умолчанию не печатает фоны. Тёмные секции остались бы
+   светлым текстом по белой бумаге — то есть контакты и сборы исчезли бы
+   с распечатки целиком. Плюс раскрываем FAQ: свёрнутый <details> на
+   бумаге просто пустое место. */
+@media print {
+  header { position: static; }
+  #menu-toggle,
+  #mobile-menu,
+  a[href="#hero"].sr-only { display: none !important; }
+
+  #camps,
+  #contacts,
+  #camps *,
+  #contacts * {
+    background: #fff !important;
+    color: #241e19 !important;
+    border-color: #b9ad98 !important;
+  }
+
+  /* Раскрытием FAQ занимается обработчик beforeprint в site.js: закрытый
+     <details> не отрисовывает содержимое вовсе, и CSS его не достаёт. */
+  .faq-sign { display: none; }
+
+  article,
+  figure,
+  .faq-item { break-inside: avoid; }
+
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+  /* Ссылка на карты — 259 символов процент-кодировки: на бумаге это шум, а не адрес */
+  a[href*="yandex.ru/maps"]::after { content: " (Яндекс.Карты)"; }
+}
+
+/* ── Карусель фото сборов ─────────────────────────────────────────────
+   Листается пальцем и без JavaScript: это обычная горизонтальная прокрутка
+   с привязкой к кадру. Скрипт только добавляет стрелки и счётчик «1 / 3». */
+.carousel { position: relative; }
+
+.carousel-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.carousel-track::-webkit-scrollbar { display: none; }
+
+/* Окно 4:3, а не фиксированная высота: при высоте 16rem широкая карточка
+   превращала вертикальный групповой кадр в полосу 2:1 и срезала головы и ноги.
+   Точка фокуса своя у каждого кадра — style="--focus: X% Y%" в разметке. */
+.carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: var(--focus, 50% 55%);
+  scroll-snap-align: center;
+}
+
+/* Афиша — текст по краям: её показываем целиком, без обрезки, на тёмной подложке */
+.carousel-slide--poster {
+  object-fit: contain;
+  background: #1c1815;
+}
+
+.carousel-count {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(28, 24, 21, 0.72);
+  color: #f7f3ea;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-top: -1.375rem;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(28, 24, 21, 0.72);
+  color: #f7f3ea;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.carousel-btn[data-dir="-1"] { left: 0.75rem; }
+.carousel-btn[data-dir="1"] { right: 0.75rem; }
+.carousel-btn[disabled] { opacity: 0; pointer-events: none; }
+
+@media print {
+  .carousel-track { overflow: visible; }
+  .carousel-slide:not(:first-child),
+  .carousel-btn,
+  .carousel-count { display: none !important; }
+}
+
+/* ── Телефон ──────────────────────────────────────────────────────────
+   Основной трафик приходит из соцсетей с телефона: крупные цели нажатия,
+   отклик на касание вместо серой вспышки iOS, компактные портреты. */
+html { -webkit-text-size-adjust: 100%; }
+a, button, summary { -webkit-tap-highlight-color: transparent; }
+
+a.rounded:active,
+button:active,
+.contact-btn:active { transform: scale(0.98); }
+a.rounded,
+button,
+.contact-btn { transition: transform 0.12s ease, background-color 0.15s ease, color 0.15s ease; }
+
+.hero-avatar {
+  object-position: 50% 16%;
+  border: 2px solid var(--paper-2);
+  box-shadow: 0 0 0 1px var(--line);
+}
+
+@media (max-width: 767px) {
+  .about-portrait { aspect-ratio: 4 / 5; height: auto; object-position: 50% 22%; }
+}
+
+.contact-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid rgba(247, 243, 234, 0.22);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #f7f3ea;
+}
+.contact-btn span {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(247, 243, 234, 0.72);
+  text-align: right;
+}
+.contact-btn:hover { background: rgba(247, 243, 234, 0.06); }
+.contact-btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.contact-btn--primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
+.contact-btn--primary span { color: #f7f3ea; }
+
+.faq-sign {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font: 400 20px/1 Inter, -apple-system, sans-serif;
+}
+
+.contact-btn span { white-space: nowrap; }
+/* Селектор с header: собранный Tailwind подключён ПОСЛЕ site.css, и его
+   tracking/text-[11px] при равной специфичности перебивали это правило. */
+@media (max-width: 359px) {
+  header .header-sub { letter-spacing: 0.06em; font-size: 10px; }
+}
+@media (max-width: 359px) {
+  #hero h1 { font-size: 32px; }
+}
+
+/* Карусель вертикальных кадров (медали, победы): окно 4:5, иначе 4:3
+   срезает головы и ноги у фото в полный рост */
+.carousel--portrait .carousel-slide { aspect-ratio: 4 / 5; }
