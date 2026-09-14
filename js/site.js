@@ -33,6 +33,20 @@
     return rows.filter(function (r) { return r.some(function (c) { return c.trim(); }); });
   };
 
+  var MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+
+  // «14.09.2026 23:41:09» из «Отметки времени» → 14 сентября 2026
+  var reviewDate = function (stamp) {
+    var m = /(\d{1,2})\.(\d{1,2})\.(\d{4})/.exec(stamp || '');
+    if (!m) return null;
+    var d = +m[1], mo = +m[2];
+    return {
+      iso: m[3] + '-' + (mo < 10 ? '0' : '') + mo + '-' + (d < 10 ? '0' : '') + d,
+      label: d + ' ' + MONTHS[mo - 1] + ' ' + m[3]
+    };
+  };
+
   var renderReviews = function (rows) {
     var list = document.getElementById('reviews-list');
     if (!list || rows.length < 2) return;
@@ -43,7 +57,12 @@
       if (nameIdx < 0 && (h.indexOf('обращат') >= 0 || h.indexOf('имя') >= 0)) nameIdx = i;
     });
     var modIdx = header.indexOf('публиковать');
+    var stampIdx = 0;
+    header.forEach(function (h, i) {
+      if (h.indexOf('отметка') >= 0 || h.indexOf('timestamp') >= 0) stampIdx = i;
+    });
     var skip = { 0: true };
+    skip[stampIdx] = true;
     if (nameIdx >= 0) skip[nameIdx] = true;
     if (modIdx >= 0) skip[modIdx] = true;
     var rest = [];
@@ -67,10 +86,21 @@
       quote.className = 'leading-relaxed text-ink2';
       // Текст пишут посторонние люди: только textContent, никакого innerHTML.
       quote.textContent = '«' + text + '»';
+      var meta = document.createElement('div');
+      meta.className = 'mt-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1';
       var who = document.createElement('p');
-      who.className = 'mt-4 text-sm font-medium text-ink';
+      who.className = 'text-sm font-medium text-ink';
       who.textContent = name;
-      card.appendChild(quote); card.appendChild(who);
+      meta.appendChild(who);
+      var date = reviewDate(row[stampIdx]);
+      if (date) {
+        var when = document.createElement('time');
+        when.className = 'text-sm text-ink2';
+        when.setAttribute('datetime', date.iso);
+        when.textContent = date.label;
+        meta.appendChild(when);
+      }
+      card.appendChild(quote); card.appendChild(meta);
       made.appendChild(card); count++;
     }
     if (!count) return;
