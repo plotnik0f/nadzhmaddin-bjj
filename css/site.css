@@ -290,6 +290,10 @@ button,
   text-align: right;
 }
 .contact-btn:hover { background: rgba(247, 243, 234, 0.06); }
+/* Не ссылка: профиль Instagram показываем только текстом (см. CLAUDE.md) */
+.contact-btn--static:hover { background: none; }
+.contact-btn--static:active { transform: none; }
+.contact-btn--static span { user-select: text; }
 .contact-btn--primary {
   background: var(--accent);
   border-color: var(--accent);
