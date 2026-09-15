@@ -59,6 +59,7 @@
       <a class="nav-link link-underline hover:text-ink" href="#about">О тренере</a>
       <a class="nav-link link-underline hover:text-ink" href="#services">Услуги</a>
       <a class="nav-link link-underline hover:text-ink" href="#camps">Сборы</a>
+      <a class="nav-link link-underline hover:text-ink" href="#seminars">Семинары</a>
       <a class="nav-link link-underline hover:text-ink" href="#reviews">Отзывы</a>
       <a class="nav-link link-underline hover:text-ink" href="#faq">Вопросы</a>
       <a class="nav-link link-underline hover:text-ink" href="#contacts">Контакты</a>
@@ -84,6 +85,7 @@
       <a class="border-b border-line/60 py-3 text-ink2" href="#about">О тренере</a>
       <a class="border-b border-line/60 py-3 text-ink2" href="#services">Услуги</a>
       <a class="border-b border-line/60 py-3 text-ink2" href="#camps">Сборы</a>
+      <a class="border-b border-line/60 py-3 text-ink2" href="#seminars">Семинары</a>
       <a class="border-b border-line/60 py-3 text-ink2" href="#reviews">Отзывы</a>
       <a class="border-b border-line/60 py-3 text-ink2" href="#faq">Вопросы</a>
       <a class="py-3 text-ink2" href="#contacts">Контакты</a>
@@ -459,10 +461,52 @@
       <div>
         <h3 class="font-display text-xl font-semibold">Семинары</h3>
         <p class="mt-2 text-sm leading-relaxed text-paper/70">
-          Беру одну узкую тему и разбираю её подробно. Например, летом 2026 года в Strela&nbsp;Gym был семинар по болевым на ноги.
+          Беру одну узкую тему и разбираю её подробно. Например, в ноябре 2025 года в Strela&nbsp;Gym разбирали позицию 4/11. <a href="#seminars" class="link-underline font-medium text-accentLight">Прошедшие семинары</a>
         </p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ── Семинары ──────────────────────────────────────────────
+     Только прошедшие семинары и только по материалам владельца.
+     Новый семинар — новая <article> сверху. -->
+<section id="seminars" class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-24">
+  <p class="section-index text-xs uppercase text-ink2">04 · Семинары</p>
+  <h2 class="mt-3 font-display text-3xl font-bold sm:text-4xl">Прошедшие семинары</h2>
+
+  <div class="mt-12 grid gap-6">
+
+    <article class="grid overflow-hidden rounded-xl border border-line bg-paper2/60 md:grid-cols-2">
+      <div class="carousel carousel--portrait w-full sm:mx-auto sm:max-w-xl md:max-w-none" data-carousel>
+        <div class="carousel-track" tabindex="0" role="region" aria-label="Семинар 4/11: афиша, видео и общее фото">
+          <img src="assets/img/seminar-411-poster.jpg" width="595" height="800" alt="Афиша семинара No-Gi 4/11 в Strela Gym, 23 ноября, 13:00"
+               class="carousel-slide carousel-slide--poster" loading="lazy" decoding="async">
+          <video class="carousel-slide carousel-slide--poster" controls playsinline preload="none"
+                 poster="assets/img/seminar-411-video.jpg" aria-label="Видео с семинара 4/11">
+            <source src="assets/video/seminar-411.mp4" type="video/mp4">
+          </video>
+          <img src="assets/img/seminar-411-group.jpg" width="800" height="533" alt="Общее фото участников семинара 4/11 в Strela Gym"
+               class="carousel-slide carousel-slide--poster" loading="lazy" decoding="async">
+        </div>
+        <span class="carousel-count" aria-hidden="true">3 слайда</span>
+      </div>
+      <div class="flex flex-col p-6 sm:p-8">
+        <div class="flex flex-wrap items-center gap-3">
+          <p class="text-[13px] font-medium uppercase tracking-wide text-accentInk">23 ноября 2025 · 13:00</p>
+          <span class="rounded-full border border-line px-2.5 py-0.5 text-xs uppercase tracking-wide text-ink2">прошёл</span>
+        </div>
+        <h3 class="mt-2 font-display text-2xl font-semibold sm:text-3xl">4/11: атаки и защита</h3>
+        <p class="mt-1 text-sm text-ink2">No-Gi · Strela&nbsp;Gym, пр.&nbsp;Космонавтов,&nbsp;65&nbsp;к11</p>
+        <p class="mt-4 leading-relaxed text-ink2">
+          Болевые на ноги: один из самых эффективных способов досрочного завершения схваток. Большую часть побед на соревнованиях я добыл именно благодаря им.
+        </p>
+        <p class="mt-3 leading-relaxed text-ink2">
+          Тема: 4/11, она же седло (saddle), медовая яма (honey hole) или инсайд санкаку (inside sankaku). Это одна из самых доминирующих позиций для контроля ног и проведения болевых приёмов в современном грэпплинге и No-Gi BJJ.
+        </p>
+      </div>
+    </article>
+
   </div>
 </section>
 
@@ -472,7 +516,7 @@
      при следующей выгрузке правки затрутся. -->
 <section id="reviews" class="border-b border-line bg-paper2">
   <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-24">
-    <p class="section-index text-xs uppercase text-ink2">04 · Отзывы</p>
+    <p class="section-index text-xs uppercase text-ink2">05 · Отзывы</p>
     <h2 id="reviews-heading" class="mt-3 font-display text-3xl font-bold sm:text-4xl">Что говорят ученики</h2>
 
     <div class="mt-8 max-w-2xl">
@@ -674,7 +718,7 @@
 
 <!-- ── Вопросы ───────────────────────────────────────────── -->
 <section id="faq" class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-24">
-  <p class="section-index text-xs uppercase text-ink2">05 · Вопросы</p>
+  <p class="section-index text-xs uppercase text-ink2">06 · Вопросы</p>
   <h2 class="mt-3 font-display text-3xl font-bold sm:text-4xl">Что спрашивают перед первой тренировкой</h2>
 
   <div class="mt-10 max-w-3xl divide-y divide-line border-y border-line">
@@ -747,7 +791,7 @@
 <!-- ── Контакты ──────────────────────────────────────────── -->
 <footer id="contacts" class="bg-dark text-paper">
   <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-24">
-    <p class="section-index text-xs uppercase text-paper/55">06 · Контакты</p>
+    <p class="section-index text-xs uppercase text-paper/55">07 · Контакты</p>
     <h2 class="mt-3 font-display text-3xl font-bold sm:text-4xl">Пишите, договоримся</h2>
 
     <div class="mt-12 grid gap-12 md:grid-cols-2">

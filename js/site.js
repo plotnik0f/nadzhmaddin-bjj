@@ -227,8 +227,11 @@
       return btn;
     };
 
-    var prev = makeButton(-1, isReviews ? 'Предыдущие отзывы' : 'Предыдущее фото', 'M10 3L5 8l5 5');
-    var next = makeButton(1, isReviews ? 'Следующие отзывы' : 'Следующее фото', 'M6 3l5 5-5 5');
+    var videos = Array.prototype.slice.call(track.querySelectorAll('video'));
+    var prevLabel = isReviews ? 'Предыдущие отзывы' : videos.length ? 'Предыдущий слайд' : 'Предыдущее фото';
+    var nextLabel = isReviews ? 'Следующие отзывы' : videos.length ? 'Следующий слайд' : 'Следующее фото';
+    var prev = makeButton(-1, prevLabel, 'M10 3L5 8l5 5');
+    var next = makeButton(1, nextLabel, 'M6 3l5 5-5 5');
 
     var update = function () {
       var total = pages(), index = current();
@@ -236,6 +239,16 @@
       prev.disabled = index === 0;
       next.disabled = index >= total - 1;
       carousel.toggleAttribute('data-single', total < 2);
+      // Пролистали видео — останавливаем, чтобы звук не играл за кадром
+      if (videos.length) {
+        var box = track.getBoundingClientRect();
+        videos.forEach(function (video) {
+          // Видео на весь экран: его размеры уже не про карусель, не трогаем
+          var fullscreen = document.fullscreenElement === video || document.webkitFullscreenElement === video || video.webkitDisplayingFullscreen;
+          var r = video.getBoundingClientRect(), mid = r.left + r.width / 2;
+          if (!video.paused && !fullscreen && (mid < box.left || mid > box.right)) video.pause();
+        });
+      }
     };
 
     var queued = false;
