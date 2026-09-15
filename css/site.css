@@ -336,6 +336,9 @@ button,
   gap: 1.5rem;
 }
 .reviews-track > article { scroll-snap-align: start; }
+/* Переносы строк из формы показываем как есть */
+.reviews-track > article > p:first-child { white-space: pre-line; }
+
 
 @media (min-width: 768px) {
   .carousel-track.reviews-track {
