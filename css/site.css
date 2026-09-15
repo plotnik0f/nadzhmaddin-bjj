@@ -357,6 +357,13 @@ button,
   .reviews-track > article:nth-child(4n + 2) { grid-row: 1; }
   .reviews-track > article:nth-child(4n + 3),
   .reviews-track > article:nth-child(4n + 4) { grid-row: 2; }
+  /* При 4n+1 отзывах верхний ряд на колонку длиннее нижнего, и последняя
+     страница выходит в полколонки: прокрутка упирается в край и показывает
+     её вместе с соседней. Пустая колонка добивает страницу до полной. */
+  .reviews-track:has(> article:nth-child(4n + 1):last-child)::after {
+    content: "";
+    grid-row: 1;
+  }
 }
 
 /* Стрелки и счётчик — под отзывами, а не поверх текста */
